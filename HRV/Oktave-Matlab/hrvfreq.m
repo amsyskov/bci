@@ -31,28 +31,32 @@
 ## Author: a.m.syskov <a.m.syskov@SK5-900-W01>
 ## Created: 2017-07-07
 
-function [specArray1, valHF, valLF, valVLF] = hrvfreq (signalArray)
+function [freqArray, specArray1, valHF, valLF, valVLF] = hrvfreq (signalArray)
 % Time vector with fixed sampling frequency
-  Fs = 10;
-  timeArray = signalArray(1,1):(1000/Fs):signalArray(1,end);
+  Fs = 4;
+  timeArray = signalArray(1,1):(1000/Fs):signalArray(end,1);
 % Vector with values for discret signal with sampling frequence Fs
   discretSignalArray = interp1(signalArray(:,1),signalArray(:,2),timeArray,'spline');
 % Discrete Fourier transform for detrended signal. 
 % Identify a new input length n that is the next power of 2 from the original 
-% signal length. This will pad the signal discretSignalArray with trailing zeros in order 
-% to improve the performance of fft. 
-  n = 2^nextpow2(length(discretSignalArray));
-  pointsDFT = fft(detrend(discretSignalArray),n);
+% signal length if need improve of perfomance. This will pad the signal 
+% discretSignalArray with trailing zeros. 
+  n = length(discretSignalArray);
+%  n = 2^nextpow2(length(discretSignalArray));
+  pointsDFTArr = fft(detrend(discretSignalArray),n);
 % Compute the two-sided spectrum specArray2. 
 % Then compute the single-sided spectrum specArray1 based on specArray2 
 % and the even-valued signal length.
-  specArray2 = abs(pointsDFT)/n;
+  specArray2 = abs(pointsDFTArr)/n;
   specArray1 = specArray2(1:n/2+1);
   specArray1(2:end-1) = 2*specArray1(2:end-1);
 % Define the frequency domain freqArray. 
   freqArray = Fs*(0:(n/2))/n;
 % Compute sum in HF, LF, VLF for HRV signal
-  valHF = sum(specArray1(freqArray>0.4 & freqArray<0.15));
-  valLF = sum(specArray1(freqArray>0.15 & freqArray<0.04));  
-  valVLF = sum(specArray1(freqArray>0.04 & freqArray<0.003));  
+  idxArr = find(freqArray(freqArray<0.4 & freqArray>0.15));
+  valHF = sum(specArray1(idxArr));
+  idxArr = find(freqArray(freqArray<0.15 & freqArray>0.04));
+  valLF = sum(specArray1(idxArr));  
+  idxArr = find(freqArray(freqArray<0.04 & freqArray>0.003));
+  valVLF = sum(specArray1(idxArr));  
 endfunction
