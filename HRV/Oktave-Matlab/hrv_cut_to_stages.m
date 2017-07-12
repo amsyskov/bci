@@ -20,7 +20,7 @@
 % Открытие файла данных ВСР.
 % Для загрузки из исходного файла удаляется заголовок.
 % Файл содержит 3 столбца: Время(мс), ЭКГ - I:ЧСС, ЭКГ - I:RR
-filename = '.\data\Purtov_0906\purtov_hrv_data_only.txt';
+filename = '.\data\Borisov_0906\Borisov_0906.txt';
 delimiterIn = ' ';
 hrvRawArray = importdata (filename,delimiterIn); 
 hrvRawSize = size(hrvRawArray); %массив [число строк,число столбцов]
@@ -31,7 +31,7 @@ hrvRRArray = hrvRawArray(1:hrvRawSize(1),3); % значения RR
 hrvTimeRRArray = [hrvTimeArray,hrvRRArray]; % время и RR
 
 %разбиваем на интервалы
-stageEndTimeArray = [5,8,11,14,19] * 60000; %начало интервалов ms.
+stageEndTimeArray = [5,8,11,14,19] * 60000; %конец интервалов ms.
 stageTimeRRCell = cell(length(stageEndTimeArray),1); %содержит массивы для стадий.
 for i = 1:length(stageEndTimeArray)
   % заполняем массив индекса строк указанной стадии
