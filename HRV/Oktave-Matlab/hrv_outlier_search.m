@@ -11,7 +11,7 @@
 %======================================
 
 % Открытие файла данных ВСР, который содержит данные одной стадии
-filename = '.\data\Purtov_0906\purtov_hrv_data_only_rawdata_stage_1.txt';
+filename = '.\data\Borisov_0906\Borisov_0906_rawdata_stage_5.txt';
 delimiterIn = ' ';
 hrvRawArray = importdata (filename,delimiterIn); 
 hrvRawSize = size(hrvRawArray); %массив [число строк,число столбцов]
@@ -22,7 +22,7 @@ hrvRRArray = hrvRawArray(1:hrvRawSize(1),2); % значения RR
 hrvTimeRRArray = [hrvTimeArray,hrvRRArray]; % время и RR
 
 %Отмечаем выбросы в данных с использованием окна
-hrvOutlierArray = isoutlier3sigma(hrvRRArray,6);
+hrvOutlierArray = isoutlier3sigma(hrvRRArray, length(hrvRRArray));
 outlierCount = length(find(hrvOutlierArray(:,2) == 1));
 hrvTimeRRMarksOutliersArray = [hrvTimeArray, hrvOutlierArray];
 [pathStr,fileStr,extStr] = fileparts(filename);

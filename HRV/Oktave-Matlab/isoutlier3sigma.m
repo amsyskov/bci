@@ -10,7 +10,7 @@ function outlierIndexArr = isoutlier3sigma( inputArr, windowSize )
             if (inputArr(iWinItem)>m + 3*s) || (inputArr(iWinItem)<m - 3*s)
                outlierIndexArr(iWinItem) = 1;
             else
-               outlierIndexArr(iWinItem) = 0; 
+               %outlierIndexArr(iWinItem) = 0; 
             end
         end
     end

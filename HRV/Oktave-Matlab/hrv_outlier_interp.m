@@ -13,10 +13,10 @@
 %======================================
 
 % Импорт данных из файла ВСР для одной стадии
-filename = '.\data\Purtov_0906\purtov_hrv_data_only_rawdata_stage_1_outliermarks_.txt';
+filename = '.\data\Borisov_0906\Borisov_0906_rawdata_stage_5_outliermarks.txt';
 delimiterIn = ' ';
 hrvRawArray = importdata (filename,delimiterIn); 
-hrvRawSize = length(hrvRawArray); %массив [число строк,число столбцов]
+hrvRawSize = length(hrvRawArray); 
 %Формируем массивы
 hrvClearDataIdxArray = find(hrvRawArray(:,3) == 0); % индексы строк без выбросов.
 hrvClearArray = hrvRawArray(hrvClearDataIdxArray,:); % данные без выбросов.
@@ -25,5 +25,5 @@ hrvFixedOutlierArray = interp1(hrvClearArray(:,1), hrvClearArray(:,2), hrvRawArr
 hrvFixedDataArray = [hrvRawArray(:,1),hrvFixedOutlierArray(:,1)];
 %сохраняем результаты обработки в файл
 [pathStr,fileStr,extStr] = fileparts(filename);
-fileForSave = [pathStr,'\',fileStr,'fixed',extStr];
+fileForSave = [pathStr,'\',fileStr,'_fixed',extStr];
 dlmwrite(fileForSave,hrvFixedDataArray,' ');
