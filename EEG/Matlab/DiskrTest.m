@@ -1,15 +1,27 @@
 clear all
 close all
-load ('X:\bvi\!test\EPOC+\EEGEEG_ResultsG.mat')
-M1=EEGEEGResultsG(5:5:end,:);
-M2=EEGEEGResultsG(1:5:end,:);
+load ('EEGEEG_ResultsG.mat')
+M1=EEGEEGResultsG(1:5:end,:);
+M2=EEGEEGResultsG(2:5:end,:);
 M=vertcat(M1,M2);
 
 %Набор двумерных пространств методом главных компонент
-[coefPCA,score,latent]=pca(M);
+[coefPCA,score,latent,tsquared,explained]=pca(M);
+coefPCAArr = abs(coefPCA(:,1:3));
+coefPCA4x14 = zeros(14,4);
+for i = 1:14
+    coefPCA4x14(i,:) = abs(coefPCA(4*(i-1)+1:4*(i-1)+4,1));
+end
+figure; barh(coefPCA4x14,'stacked','DisplayName','coefPCA4x14');
+figure;pcolor(coefPCAArr);
+colormap jet
+
+
 Statistics=zeros(9,2);
 m=1;
 group = [1,1,1,1,1,1,1,1,1,2,2,2,2,2,2,2,2,2]';
+linearCoeff = zeros(9,2);
+errStatArray = zeros(9,1);
 %Чики-брики человечка выкинь
 for n=1:length(score)/2
     Strain=score;
@@ -43,10 +55,12 @@ for n=1:length(score)/2
                                 % X = X(:); Y = Y(:);
                               %  [C,err,P,logp,coeff] = classify([X Y],[SL SW],  gtrain,'quadratic');
                                 [CL,errL,PL,logpL,coeffL] = classify([sL sW],[SL SW],  gtrain);
+                                errStatArray(n) = errL;
                                 hold on
                                 gscatter(sL,sW,gtest,'rb','*o',[],'off');
                               K = coeffL(1,2).const;
                                                                            L = coeffL(1,2).linear;
+                                                                           linearCoeff (n,:) = L;
                                                                          %    Q = coeffL(1,2).quadratic;
                                                                              % Function to compute K + L*v + v'*Q*v for multiple vectors
                                                                              % v=[x;y]. Accepts x and y as scalars or column vectors.
@@ -81,6 +95,11 @@ end
 figure;
 latent=latent/sum(latent);
 plot(1:length(latent),cumsum(latent));
-figure;pcolor(abs(coefPCA));
-colormap jet
+
+figure;
+maxCoeff = max(linearCoeff(1:end));
+linearCoeff = linearCoeff / maxCoeff;
+boxplot(linearCoeff);
+
+
 e=2.718281828459045
